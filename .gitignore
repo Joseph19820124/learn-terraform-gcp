@@ -1,0 +1,11 @@
+# Terraform 本地状态和缓存 —— 绝对不要提交到 git
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+
+# 你的真实变量值(可能含敏感信息)—— 不提交
+terraform.tfvars
+*.auto.tfvars
+
+# 说明:.terraform.lock.hcl(依赖锁定文件)是【应该】提交的,所以不在忽略列表里。

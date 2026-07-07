@@ -1,0 +1,8 @@
+# 用法:把这个文件复制成 terraform.tfvars,再把 project_id 改成你自己的项目 ID。
+#   cp terraform.tfvars.example terraform.tfvars
+#
+# terraform.tfvars 里放你的真实值;它已被 .gitignore 忽略,不会被误传到 GitHub。
+
+project_id = "your-gcp-project-id" # ← 改成你的 GCP 项目 ID
+region     = "us-central1"
+vpc_name   = "my-first-vpc"
