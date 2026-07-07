@@ -8,12 +8,12 @@
 
 # ---------- 1. 声明要用哪个 provider,并锁定版本(保证换台机器结果一致)----------
 terraform {
-  required_version = ">= 1.3"
+  required_version = ">= 1.10" # 用较新的 Terraform(2026 年最新已到 1.15.x)
 
   required_providers {
     google = {
       source  = "hashicorp/google" # 从官方 registry 下载 google provider
-      version = "~> 5.0"            # 允许 5.x 的任意小版本
+      version = "~> 7.39"          # 用 7.x 系列(2026 年最新;比旧的 5.x 新很多)
     }
   }
 }
