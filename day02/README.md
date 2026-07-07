@@ -65,4 +65,33 @@ terraform destroy
 `10.0.0.0/24` 是一个 IP 段的写法:`/24` 表示前 24 位是网络位,后 8 位给主机,
 所以这个段有 2^8 = 256 个地址(其中头尾几个被 GCP 保留)。段越小(数字越大)地址越少。
 
-下一天(day03)会给这个网络加**防火墙规则**,或在子网里开一台**虚拟机**。
+## 新手坑:同名 ≠ 复用(理解 Terraform state)
+
+常见疑问:"我 day01 建的 VPC 没删,day02 也用同一个名字,能直接用上它吗?"
+**不能,会报错。** 如果 GCP 里已经有 `my-first-vpc`,再跑 day02 会得到:
+
+```
+Error: Error creating Network: googleapi: Error 409:
+The resource '.../global/networks/my-first-vpc' already exists, alreadyExists
+```
+
+**为什么?** Terraform 靠一个叫 **state(状态文件 `terraform.tfstate`)** 的东西记账,
+记录"我管理了哪些真实资源、它们的真实 ID"。而 **day01 和 day02 是两个独立目录、
+各有各的 state,互不认识**。所以跑 day02 时:
+
+- day02 的 state 是空的,不知道 day01 已经建过那个 VPC;
+- 它看到代码要一个 `my-first-vpc`,就去 GCP **创建**;
+- 但 GCP 里已有同名 VPC(名字在一个项目里必须唯一)→ **409 冲突**。
+
+> 核心观念:**Terraform 认资源靠 state 里记的 ID,不靠"名字碰巧一样"。**
+> 名字相同不会让 day02 自动"接管"day01 的 VPC,反而会撞车。
+
+**怎么办?**
+1. 学习时最简单:day01 学完就 `terraform destroy`,day02 从零开始。
+2. 想两个并存:把 day02 的 `vpc_name` 改成别的名字。
+3. 想让 day02 **用已存在的 VPC**:那就不是"再创建",而是 **data source(引用)** 或
+   **import(接管)**——正是 [day03](../day03/) 要讲的。
+
+## 下一天
+
+[day03](../day03/):**data source** 和 **import** —— 怎么在 Terraform 里"用上"已经存在的资源,以及这两者的区别。

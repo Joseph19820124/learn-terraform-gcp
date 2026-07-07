@@ -1,0 +1,4 @@
+# cp terraform.tfvars.example terraform.tfvars,再把 project_id 改成你的。
+project_id = "your-gcp-project-id" # ← 改成你的项目 ID
+region     = "us-central1"
+vpc_name   = "day03-import-vpc" # 见 README:先用 gcloud 手工建它,再 import 接管
