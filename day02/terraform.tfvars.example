@@ -1,0 +1,8 @@
+# 用法:cp terraform.tfvars.example terraform.tfvars,再把 project_id 改成你的。
+# terraform.tfvars 已被 .gitignore 忽略,不会误传到 GitHub。
+
+project_id  = "your-gcp-project-id" # ← 改成你的 GCP 项目 ID
+region      = "us-central1"
+vpc_name    = "my-first-vpc"
+subnet_name = "my-first-subnet"
+subnet_cidr = "10.0.0.0/24"
