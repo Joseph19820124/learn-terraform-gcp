@@ -12,8 +12,9 @@
 | [day02](day02/) | 资源引用 + 自动依赖排序 | **VPC + 子网(subnet)** |
 | [day03](day03/) | 用上现有资源:**data source vs import** 及区别 | 引用/接管现有 VPC |
 | [day04](day04/) | **远程 state**:把 state 存到 GCS(团队协作 + 加锁) | VPC(state 在 GCS) |
+| [day05](day05/) | **module 模块化**:封装可复用模块,调用多次 | 一份模块 → 两套 VPC+子网 |
 
-（后续:day05 防火墙/虚拟机、多环境、module 模块化 …… 逐步加。）
+（后续:day06 多环境(dev/staging/prod)、防火墙/虚拟机 …… 逐步加。）
 
 ## 快速开始
 
