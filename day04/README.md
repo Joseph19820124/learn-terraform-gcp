@@ -61,9 +61,44 @@ gcloud storage ls gs://<你的项目ID>-tfstate/day04/
 
 ## 锁(locking)是怎么回事
 
-`apply` 期间,GCS backend 会在桶里写一个**锁对象**;这时如果另一个人也来 `apply`,
-会看到 `Error: Error acquiring the state lock`,被挡住等你完成。这就避免了两个人
-同时改、把 state 写坏。全自动,你不用做任何事。
+**锁 = 防止两个 Terraform 同时改同一份 state 的"互斥"。**
+
+一次 `apply` 是:读 state → 算 diff → 改云资源 → 写回新 state。如果两人同时 apply 同一份
+远程 state,会各自读到同一起点、各自改、都写回 —— **后写的把先写的覆盖掉**,state 就错乱了
+(资源失联或被重复创建)。
+
+所以在写 state 之前,Terraform 先**抢锁**:往桶里写一个"占用中"的记录(含
+`LockID / 谁 / 什么操作 / 时间`)。抢到才干活,干完删掉(**释放**)。这期间另一个人来 apply
+会看到:
+
+```
+Error: Error acquiring the state lock
+Lock Info: ID xxx, Who: you@..., Operation: apply, ...
+```
+
+打个比方:就是厕所门上那块"**有人**"的牌子,或编程里的 mutex。全自动,你不用做任何事。
+(如果谁 apply 到一半崩了、锁没释放,用 `terraform force-unlock <ID>` 手动解。)
+
+## 为什么 GCS 不用锁表,而 AWS S3 要外挂 DynamoDB?(高频面试点)
+
+关键在于:**"抢锁"这个动作必须是原子的,而且支持"仅当它还不存在时才创建成功"**
+(专业叫**条件写 / compare-and-set**)。否则两人同时抢会都以为抢到了(竞态),锁就失效。
+
+| | **GCS(GCP)** | **S3(AWS,传统)** |
+|---|---|---|
+| 强一致性 | ✅ 天生就有 | 早期是最终一致性(2020 才变强一致) |
+| 原子条件写("仅当不存在才写") | ✅ 天生支持(`x-goog-if-generation-match: 0`) | 传统上**没有**(2024 才加 `If-None-Match`) |
+| 结果 | **桶自己就能当锁**:抢锁=用"仅当不存在"写一个 `.tflock` 对象,第二个人原子失败 | S3 自己做锁不可靠 → **外挂 DynamoDB** |
+
+- **GCS**:天生具备"强一致 + 原子条件写",所以**一个桶就能同时存 state 和实现锁**,不需要第二个服务。
+- **S3(传统)**:当年 S3 没有可靠的原子条件写,而 **DynamoDB 支持条件写(`attribute_not_exists`)、强一致、原子**,正好能当可靠的互斥器。于是分工变成:**S3 存 state 数据,DynamoDB 只当"锁 + state 校验值"的协调器**。这就是 AWS 教程里总是 "S3 + DynamoDB 一对" 的原因。
+
+**2026 的新变化**:AWS 2020 让 S3 变强一致、2024 给 S3 加了条件写,于是**新版 Terraform(1.10+)
+的 S3 backend 支持 S3 原生锁**(`use_lockfile = true`),**DynamoDB 变成可选**。但海量存量项目
+还是老配方,面试和工作里还会经常见到。
+
+> 一句话:**锁靠"原子条件写"实现。GCS 天生支持,所以自己就能锁;S3 传统上不支持,只能外挂
+> DynamoDB —— 如今 S3 也支持了,DynamoDB 变可选。**
 
 ## 销毁
 
