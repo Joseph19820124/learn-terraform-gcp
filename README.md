@@ -18,8 +18,9 @@
 | [day08](day08/) | **真实案例重构**:Serverless Framework → Terraform(切到 **AWS** ECS Fargate) | Spring Boot app 跑在 ECS Fargate + ALB + 自动扩缩容 |
 | [day09](day09/) | 两个服务互相调用:**ECS Service Connect**(App Mesh 2026/9/30 停服，官方替代方案) | caller(有ALB) 调用 callee(纯内部，无公网) |
 | [day10](day10/) | 同样两服务架构换成 **VPC Lattice** 实测:能跑通，但比 Service Connect 多 7 个资源、多两个真坑 | 25个资源 vs day09 的18个；含安全组模型/IAM角色/健康检查宽限期的对比 |
+| [day11](day11/) | 同样"两服务互调"需求换回 **GCP Cloud Run + IAM** 原生认证:不需要 service mesh | 只需 6 个资源；隔离层从网络变成身份，含 IAM 传播延迟的真实坑 |
 
-（day01–07 是 GCP;day08 起引入 AWS 案例做对比。后续:多环境(dev/staging/prod)、自定义 VPC …… 逐步加。）
+（day01–07 是 GCP;day08–10 引入 AWS 案例做对比;day11 回到 GCP，用 Cloud Run 对照 day09/10。后续:多环境(dev/staging/prod)、自定义 VPC …… 逐步加。）
 
 ## 快速开始
 

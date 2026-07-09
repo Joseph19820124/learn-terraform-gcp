@@ -1,0 +1,5 @@
+project_id   = "your-gcp-project-id"
+region       = "us-central1"
+name         = "day11"
+caller_image = "us-central1-docker.pkg.dev/your-gcp-project-id/day11/caller:v1"
+callee_image = "us-central1-docker.pkg.dev/your-gcp-project-id/day11/callee:v1"
