@@ -17,6 +17,7 @@
 | [day07](day07/) | 把 day06 的安全基线**封装成模块**,调用两次 | 一份模块 → 两台"team-a/b"web 服务器 |
 | [day08](day08/) | **真实案例重构**:Serverless Framework → Terraform(切到 **AWS** ECS Fargate) | Spring Boot app 跑在 ECS Fargate + ALB + 自动扩缩容 |
 | [day09](day09/) | 两个服务互相调用:**ECS Service Connect**(App Mesh 2026/9/30 停服，官方替代方案) | caller(有ALB) 调用 callee(纯内部，无公网) |
+| [day10](day10/) | 同样两服务架构换成 **VPC Lattice** 实测:能跑通，但比 Service Connect 多 7 个资源、多两个真坑 | 25个资源 vs day09 的18个；含安全组模型/IAM角色/健康检查宽限期的对比 |
 
 （day01–07 是 GCP;day08 起引入 AWS 案例做对比。后续:多环境(dev/staging/prod)、自定义 VPC …… 逐步加。）
 

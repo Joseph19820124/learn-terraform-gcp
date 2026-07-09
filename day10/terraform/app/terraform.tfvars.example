@@ -1,0 +1,4 @@
+region       = "us-east-1"
+name         = "day10"
+caller_image = "<ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com/day10-caller:v1"
+callee_image = "<ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com/day10-callee:v1"
