@@ -12,7 +12,7 @@
 
 ## 一、准备工作(只需做一次)
 
-1. **装 Terraform**(1.3+):https://developer.hashicorp.com/terraform/install
+1. **装 Terraform**(1.10+):https://developer.hashicorp.com/terraform/install
    验证:`terraform version`
 
 2. **装 gcloud CLI** 并登录:https://cloud.google.com/sdk/docs/install
