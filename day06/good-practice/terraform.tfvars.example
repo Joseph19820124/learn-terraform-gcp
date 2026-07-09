@@ -1,0 +1,8 @@
+# cp terraform.tfvars.example terraform.tfvars，再把 project_id 改成你的。
+project_id = "your-gcp-project-id" # ← 改成你的项目 ID
+region     = "us-central1"
+zone       = "us-central1-a"
+name       = "day06-web-app"
+
+# 默认不开 SSH。如果你想 SSH 进去看，取消下面注释并换成你自己的公网 IP：
+# ssh_source_ranges = ["YOUR.PUBLIC.IP.HERE/32"]
