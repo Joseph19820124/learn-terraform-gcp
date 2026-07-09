@@ -1,0 +1,41 @@
+# serverless-original/serverless.yml —— 展示"原来的做法"，仅作对照参考，不会真的部署它。
+#
+# 真实的 Nike 案例用的是私有内部插件(@nike/fibers-serverless-ecs-fargate-plugin)，
+# 我们没有这个插件、也拿不到它内部生成的完整 CloudFormation 模板。
+# 这份文件是按同样的思路简化重写的一个"可读懂结构"的版本——展示
+# Serverless Framework 那套"高度抽象的 YAML → 插件展开成一堆 CF 资源"的心智模型，
+# 拿来和隔壁 terraform/ 目录的"你能看到每一个资源"做对比。
+
+service: hello-fargate
+
+plugins:
+  - some-org/ecs-fargate-plugin   # ← 举例；真实案例是 Nike 私有插件，这里仅示意
+
+custom:
+  config: ${file(config.yml):${self:provider.stage}}
+
+provider:
+  name: aws
+  region: us-east-1
+  stage: ${opt:stage, 'dev'}
+
+# 下面这几行"看起来"很简单，但背后插件要展开出:
+#   ECS TaskDefinition、ECS Service、ALB TargetGroup、Listener Rule、
+#   Application Auto Scaling Target + Policy、IAM 角色绑定、CloudWatch 日志组……
+# 一份完整实现可能是 15~30+ 个 CloudFormation 资源，但你在这份 YAML 里一个都看不到。
+fargate:
+  ecs:
+    cpu: 256
+    memory: 512
+    desiredCount: 1
+    containers:
+      main:
+        port: 8080
+  autoScale:
+    metric: ECSServiceAverageCPUUtilization
+    targetValue: 50
+    min: 1
+    max: 3
+  alb:
+    scheme: internal
+    healthCheckPath: /health

@@ -15,8 +15,9 @@
 | [day05](day05/) | **module 模块化**:封装可复用模块,调用多次 | 一份模块 → 两套 VPC+子网 |
 | [day06](day06/) | **常见反模式对照**(真实案例)+ 修好的 GCP 版 web app | VM + web server(nginx,可访问首页) |
 | [day07](day07/) | 把 day06 的安全基线**封装成模块**,调用两次 | 一份模块 → 两台"team-a/b"web 服务器 |
+| [day08](day08/) | **真实案例重构**:Serverless Framework → Terraform(切到 **AWS** ECS Fargate) | Spring Boot app 跑在 ECS Fargate + ALB + 自动扩缩容 |
 
-（后续:多环境(dev/staging/prod)、自定义 VPC …… 逐步加。）
+（day01–07 是 GCP;day08 起引入 AWS 案例做对比。后续:多环境(dev/staging/prod)、自定义 VPC …… 逐步加。）
 
 ## 快速开始
 

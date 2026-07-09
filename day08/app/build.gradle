@@ -1,0 +1,20 @@
+// 最小 Spring Boot app 的构建文件。
+// 故意保持极简 —— 这一天的重点是 IaC(Serverless→Terraform)，不是 Java 应用本身。
+
+plugins {
+    id 'org.springframework.boot' version '3.3.4'
+    id 'io.spring.dependency-management' version '1.1.6'
+    id 'java'
+}
+
+group = 'com.example'
+version = '0.0.1'
+sourceCompatibility = '17'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+}

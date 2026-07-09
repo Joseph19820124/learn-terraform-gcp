@@ -1,0 +1,5 @@
+# 先 cd ../ecr && terraform apply 拿到 repository_url，
+# build+push 镜像后，把完整地址(含 tag)填在这里。
+region          = "us-east-1"
+name            = "day08-hello-fargate"
+container_image = "<ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com/day08-hello-fargate:v1"
