@@ -1,0 +1,6 @@
+project_id   = "your-gcp-project-id"
+region       = "us-central1"
+name         = "day12"
+mesh_domain  = "day12.internal"
+caller_image = "us-central1-docker.pkg.dev/your-gcp-project-id/day12/caller:v1"
+callee_image = "us-central1-docker.pkg.dev/your-gcp-project-id/day12/callee:v1"
