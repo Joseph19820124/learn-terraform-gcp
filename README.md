@@ -21,8 +21,9 @@
 | [day11](day11/) | 同样"两服务互调"需求换回 **GCP Cloud Run + IAM** 原生认证:不需要 service mesh | 只需 6 个资源；隔离层从网络变成身份，含 IAM 传播延迟的真实坑 |
 | [day12](day12/) | 同样两服务架构接上 **Cloud Service Mesh**(day10 VPC Lattice 的 GCP 对照，目前 Preview) | 16 个资源 vs day11 的 6 个；Envoy sidecar 自动接管认证，实测三个坑(Beta provider、mesh 依赖传播延迟、Direct VPC egress 释放延迟) |
 | [day13](day13/) | 切回 AWS 实测 **App Runner**(Cloud Run 的 AWS 对应物，2026-04-30 起已停止对新客户开放) | 5 个资源；callee 完全没有调用方限制(App Runner 没有 IAM invoker 概念)；caller 首次创建失败重试即成功 |
+| [day14](day14/) | 实测 App Runner 官方推荐继任者 **ECS Express Mode**(全新 Terraform 原生资源) | 6 个资源；踩坑最多的一天，含一次真正的 Terraform 依赖关系 bug(共享 IAM 角色权限被过早收回，destroy 卡近 2 小时) |
 
-（day01–07 是 GCP;day08–10 引入 AWS 案例做对比;day11–12 回到 GCP，分别用 Cloud Run 原生 IAM 和 Cloud Service Mesh 对照 day09/10;day13 切回 AWS 实测 App Runner。后续:多环境(dev/staging/prod)、自定义 VPC …… 逐步加。）
+（day01–07 是 GCP;day08–10 引入 AWS 案例做对比;day11–12 回到 GCP，分别用 Cloud Run 原生 IAM 和 Cloud Service Mesh 对照 day09/10;day13–14 切回 AWS，实测 App Runner 和它的继任者 ECS Express Mode。day09-14 六天"两服务互调"系列对比至此收官。后续:多环境(dev/staging/prod)、自定义 VPC …… 逐步加。）
 
 ## 快速开始
 
