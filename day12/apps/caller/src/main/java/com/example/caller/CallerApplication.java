@@ -2,13 +2,13 @@ package com.example.caller;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.client.JdkClientHttpRequestFactory;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestClient;
 
-import java.net.URI;
 import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.time.Duration;
 
 // caller:接入了 Cloud Service Mesh 的 Cloud Run 服务(部署时带 --mesh 参数，
@@ -30,9 +30,14 @@ public class CallerApplication {
     private static final String CALLEE_URL =
             System.getenv().getOrDefault("CALLEE_URL", "http://localhost:8080");
 
-    private final HttpClient client = HttpClient.newBuilder()
-            .connectTimeout(Duration.ofSeconds(3))
-            .build();
+    private final RestClient client;
+
+    public CallerApplication() {
+        JdkClientHttpRequestFactory factory = new JdkClientHttpRequestFactory(
+                HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(3)).build());
+        factory.setReadTimeout(Duration.ofSeconds(3));
+        this.client = RestClient.builder().requestFactory(factory).build();
+    }
 
     public static void main(String[] args) {
         SpringApplication.run(CallerApplication.class, args);
@@ -44,14 +49,13 @@ public class CallerApplication {
     }
 
     @GetMapping("/hello")
-    public String hello() throws Exception {
-        HttpRequest req = HttpRequest.newBuilder()
-                .uri(URI.create(CALLEE_URL + "/data"))
-                .timeout(Duration.ofSeconds(3))
-                .GET()
-                .build();
-        HttpResponse<String> resp = client.send(req, HttpResponse.BodyHandlers.ofString());
+    public String hello() {
+        String body = client.get()
+                .uri(CALLEE_URL + "/data")
+                .retrieve()
+                .onStatus(HttpStatusCode::isError, (req, res) -> {})
+                .body(String.class);
         return "Caller says hi! Called " + CALLEE_URL
-                + "/data via Cloud Service Mesh (Envoy sidecar handled auth), got back: " + resp.body();
+                + "/data via Cloud Service Mesh (Envoy sidecar handled auth), got back: " + body;
     }
 }

@@ -2,13 +2,13 @@ package com.example.caller;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.client.JdkClientHttpRequestFactory;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestClient;
 
-import java.net.URI;
 import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.time.Duration;
 
 // caller:公开的 Cloud Run 服务(allUsers 有 run.invoker)。/hello 会转身去调用
@@ -32,9 +32,14 @@ public class CallerApplication {
     private static final String METADATA_IDENTITY_URL =
             "http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/identity";
 
-    private final HttpClient client = HttpClient.newBuilder()
-            .connectTimeout(Duration.ofSeconds(3))
-            .build();
+    private final RestClient client;
+
+    public CallerApplication() {
+        JdkClientHttpRequestFactory factory = new JdkClientHttpRequestFactory(
+                HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(3)).build());
+        factory.setReadTimeout(Duration.ofSeconds(3));
+        this.client = RestClient.builder().requestFactory(factory).build();
+    }
 
     public static void main(String[] args) {
         SpringApplication.run(CallerApplication.class, args);
@@ -46,31 +51,27 @@ public class CallerApplication {
     }
 
     @GetMapping("/hello")
-    public String hello() throws Exception {
+    public String hello() {
         String idToken = fetchIdentityToken(CALLEE_URL);
 
-        HttpRequest req = HttpRequest.newBuilder()
-                .uri(URI.create(CALLEE_URL + "/data"))
-                .timeout(Duration.ofSeconds(3))
+        String body = client.get()
+                .uri(CALLEE_URL + "/data")
                 .header("Authorization", "Bearer " + idToken)
-                .GET()
-                .build();
-        HttpResponse<String> resp = client.send(req, HttpResponse.BodyHandlers.ofString());
+                .retrieve()
+                .onStatus(HttpStatusCode::isError, (req, res) -> {})
+                .body(String.class);
         return "Caller says hi! Called " + CALLEE_URL
-                + "/data via Cloud Run IAM auth, got back: " + resp.body();
+                + "/data via Cloud Run IAM auth, got back: " + body;
     }
 
     // 向 GCP metadata server 要一个 audience 绑定到 callee URL 的 Google 签发
     // identity token。这是 Cloud Run 服务间调用的标准做法:token 只对这一个
     // audience 有效，callee 那边校验时会核对 aud 声明是不是自己的 URL。
-    private String fetchIdentityToken(String audience) throws Exception {
-        HttpRequest req = HttpRequest.newBuilder()
-                .uri(URI.create(METADATA_IDENTITY_URL + "?audience=" + audience))
-                .timeout(Duration.ofSeconds(3))
+    private String fetchIdentityToken(String audience) {
+        return client.get()
+                .uri(METADATA_IDENTITY_URL + "?audience=" + audience)
                 .header("Metadata-Flavor", "Google")
-                .GET()
-                .build();
-        HttpResponse<String> resp = client.send(req, HttpResponse.BodyHandlers.ofString());
-        return resp.body();
+                .retrieve()
+                .body(String.class);
     }
 }
