@@ -1,0 +1,13 @@
+# 用 provisioning 的方式把 Loki 数据源"烤"进镜像里,Grafana 启动即用,
+# 不需要手动在 UI 里配置。url 用的是 Service Connect 的短名字 "loki"，
+# 和 caller 调用 callee 用 "http://callee:8080" 是同一套机制。
+apiVersion: 1
+datasources:
+  - name: Loki
+    uid: loki
+    type: loki
+    access: proxy
+    url: http://loki:3100
+    isDefault: true
+    jsonData:
+      maxLines: 1000
