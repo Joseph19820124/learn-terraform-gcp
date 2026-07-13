@@ -24,8 +24,9 @@
 | [day14](day14/) | 实测 App Runner 官方推荐继任者 **ECS Express Mode**(全新 Terraform 原生资源) | 6 个资源；踩坑最多的一天，含一次真正的 Terraform 依赖关系 bug(共享 IAM 角色权限被过早收回，destroy 卡近 2 小时) |
 | [day15](day15/) | day08–14 的 Java 代码从没打过日志——在 day09 基础上接 **FireLens + Loki + Grafana** | 38 个资源；caller/callee 日志确认查得到；踩到 ECS Service Connect 的 mesh 快照只在任务启动时拍一次、不会实时更新的坑 |
 | [day16](day16/) | 在 day15 基础上把 Spring Boot 从 `3.3.4` 升到 **`4.1.0`**(2026-06-10 GA) | 应用代码零改动(`RestClient` 早在 day09 就用上了，不是 4.1 新东西)；只提了 Gradle/JDK 工具链版本；提前用 day15 学到的 `force-new-deployment` 规避了 Service Connect 的坑 |
+| [day17](day17/) | 在 day09 基础上把 ALB 换成 **Traefik**(读 ECS API 动态发现服务，caller 用 dockerLabels 声明路由) | caller 不再有自己的 target group；原计划 NLB+Traefik 被账号级别的负载均衡器信任审核拦住(不是配额)，改成 ALB+Traefik；Service Connect mesh 快照坑(day15)在这里复现了一次 |
 
-（day01–07 是 GCP;day08–10 引入 AWS 案例做对比;day11–12 回到 GCP，分别用 Cloud Run 原生 IAM 和 Cloud Service Mesh 对照 day09/10;day13–14 切回 AWS，实测 App Runner 和它的继任者 ECS Express Mode。day09-14 六天"两服务互调"系列对比至此收官。day15 回头补上 day08 起就缺失的应用日志，接了 Loki + Grafana；day16 把 day15 升级到 Spring Boot 4.1.x。后续:多环境(dev/staging/prod)、自定义 VPC …… 逐步加。）
+（day01–07 是 GCP;day08–10 引入 AWS 案例做对比;day11–12 回到 GCP，分别用 Cloud Run 原生 IAM 和 Cloud Service Mesh 对照 day09/10;day13–14 切回 AWS，实测 App Runner 和它的继任者 ECS Express Mode。day09-14 六天"两服务互调"系列对比至此收官。day15 回头补上 day08 起就缺失的应用日志，接了 Loki + Grafana；day16 把 day15 升级到 Spring Boot 4.1.x；day17 回到 day09，把 ALB 换成 Traefik 做动态路由。后续:多环境(dev/staging/prod)、自定义 VPC …… 逐步加。）
 
 ## 快速开始
 
