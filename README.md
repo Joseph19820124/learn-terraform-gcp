@@ -38,7 +38,7 @@ cd learn-terraform-gcp/day01
 
 ## 前置要求(一次性)
 
-- 装 [Terraform](https://developer.hashicorp.com/terraform/install)(1.3+)和 [gcloud CLI](https://cloud.google.com/sdk/docs/install)
+- 装 [Terraform](https://developer.hashicorp.com/terraform/install)(1.10+)和 [gcloud CLI](https://cloud.google.com/sdk/docs/install)
 - 一个开了 billing 的 GCP 项目
 - 登录并设置应用默认凭证:
   ```bash
